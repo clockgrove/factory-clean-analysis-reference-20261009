@@ -71,3 +71,30 @@ test('address navigation supersedes all writers, failure and late cleanup; retry
   assert.equal(state.intent.page, 1); assert.deepEqual(state.result.data.summary, expected({q: 'Search'}).summary);
   assert.equal(state.result.intent, state.intent);
 });
+
+test('canonical detail triage survives intent failure and obsolete detail completion without replacing retry context', async () => {
+  const {addEntry, editNote, removeEntry, ownedDetail, writeTriage, readTriage} = await import('../../public/triage.js');
+  let state = send(createState(), 'result:start');
+  state = send(state, 'result:success', {token: state.resultOp.token, data: data({})});
+  state = send(state, 'detail:select', {id: rows[0].id}); state = send(state, 'detail:start');
+  const token = state.detail.token;
+  state = send(state, 'detail:success', {token, data: rows[0]});
+  assert.equal(ownedDetail(state, token), true);
+  let triage = editNote(addEntry([], state.detail.data), rows[0].id, '<sample> & follow up');
+  state = send(state, 'address', {intent: {q: 'Search', page: 2}});
+  state = send(state, 'result:start');
+  state = send(state, 'result:failure', {token: state.resultOp.token, error: 'Current search unavailable'});
+  for (const type of ['detail:success', 'detail:failure', 'detail:finish']) assert.equal(send(state, type, {token, data: rows[1], error: 'obsolete'}), state);
+  assert.equal(ownedDetail(state, token), false);
+  const denied = {getItem() { throw Error('denied'); }, setItem() { throw Error('denied'); }};
+  assert.equal(readTriage(denied, triage).entries, triage);
+  assert.match(writeTriage(denied, triage), /could not be saved/);
+  assert.equal(announcement(state), 'Current search unavailable');
+  state = send(state, 'detail:select', {id: triage[0].id}); state = send(state, 'detail:start');
+  state = send(state, 'detail:success', {token: state.detail.token, data: rows[0]});
+  state = send(state, 'detail:close');
+  assert.equal(state.intent.q, 'Search'); assert.equal(state.intent.page, 2);
+  assert.equal(announcement(state), 'Current search unavailable');
+  triage = removeEntry(triage, rows[0].id); assert.deepEqual(triage, []);
+  state = send(state, 'result:start'); assert.equal(queryParams(state.intent).get('q'), 'Search');
+});

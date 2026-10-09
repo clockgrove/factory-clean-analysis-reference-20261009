@@ -28,6 +28,15 @@
       <div class="section-heading"><div><p class="eyebrow">All matching incidents</p><h2 id="result-title">Results overview</h2></div><span id="freshness" class="muted"></span></div>
       <div id="active-filters" class="chips" aria-label="Active selections"></div>
       <div id="summary" class="summary"></div>
+      <section id="service-overview" class="workspace-panel" aria-labelledby="service-title">
+        <h3 id="service-title">Services needing attention</h3>
+        <p class="muted">Across all matches, including later pages. Unresolved means open or in progress. High severity includes critical and high. Average resolution counts only resolved incidents, in hours; unavailable means none were resolved.</p>
+        <p id="overview-selection" class="muted"></p><div id="service-measures"></div>
+      </section>
+      <section id="triage" class="workspace-panel" aria-labelledby="triage-title">
+        <h3 id="triage-title">My triage list</h3><p class="muted">Added order. Recognition details reflect when you added the incident; Open loads current full details. Notes are personal plain text, up to 1000 characters, stored only in this browser and origin. Changing port or hostname uses a different list.</p>
+        <p id="triage-storage" role="status"></p><ol id="triage-list"></ol>
+      </section>
       <section class="chart" aria-labelledby="chart-title"><h3 id="chart-title">Opened by day · UTC</h3><p class="muted">Counts cover the entire matching result.</p><div id="chart-bars" aria-hidden="true"></div><details><summary>Read daily counts</summary><p id="chart-text"></p></details></section>
       <div class="table-controls"><div><label for="sort">Sort by</label><select id="sort"><option value="openedAt">Opened date</option><option value="severity">Severity</option></select></div><div><label for="direction">Order</label><select id="direction"><option value="desc">Newest / highest first</option><option value="asc">Oldest / lowest first</option></select></div><div><label for="page-size">Rows per page</label><select id="page-size"><option value="25">25</option><option value="50">50</option></select></div></div>
       <div id="result-message" class="operation-message"></div>
@@ -38,6 +47,6 @@
   </main>
   <dialog id="detail" aria-labelledby="detail-title"><div class="detail-heading"><h2 id="detail-title">Incident details</h2><button id="close-detail" class="secondary" type="button">Close details</button></div><div id="detail-content"></div></dialog>
   <p id="announcement" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></p>
-  <footer>Fictional incidents. Dates and times are shown in UTC. Saved views stay in this browser.</footer>
+  <footer>Fictional incidents. Dates and times are shown in UTC. Saved views and personal triage stay in this browser.</footer>
 </body>
 </html>
