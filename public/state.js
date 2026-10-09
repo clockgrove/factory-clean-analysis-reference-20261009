@@ -57,7 +57,7 @@ export function transition(state, event) {
   switch (event.type) {
     case 'intent': return changeIntent(state, normalizeIntent({...state.intent, ...event.patch, page: 1}), false);
     case 'address': return changeIntent(state, normalizeIntent(event.intent));
-    case 'restore': return changeIntent(state, normalizeIntent({...event.view, page: 1}), false);
+    case 'restore': return changeIntent(state, normalizeIntent({...event.view, page: 1}));
     case 'page': {
       if (!canPaginate(state) || !Number.isSafeInteger(event.delta)) return state;
       const page = Math.max(1, Math.min(state.result.data.totalPages, state.intent.page + event.delta));
